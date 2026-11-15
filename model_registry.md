@@ -26,7 +26,7 @@ you train a materially different model.
 | Test bad-credit F1 | 0.64 |
 | Training date | Not recorded in the notebook |
 | Git commit for this exact run | Not recorded. The notebook has uncommitted changes, so the current `HEAD` alone does not identify this exact notebook state. |
-| Saved model artifact | None recorded |
+| Saved model artifact | `artifacts/credit_risk_model.joblib` (fitted pipeline and threshold saved together) |
 
 ### Lineage and reproducibility notes
 
@@ -38,5 +38,10 @@ you train a materially different model.
   hash in the entry.
 - These metrics are the outputs saved in the notebook; they have not been
   independently rerun as part of creating this registry.
+- The persisted artifact was created by repeating the notebook's deterministic
+  split and grid search because the original fitted object existed only in the
+  notebook's kernel memory. Prediction equivalence was checked before and after
+  serialization. Use `python save_model.py` to recreate it and
+  `python -m unittest discover -s tests` to verify it.
 - The model and metrics are a project experiment, not evidence that the model
   is validated or approved for real credit decisions.

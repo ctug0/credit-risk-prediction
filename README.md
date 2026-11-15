@@ -159,3 +159,33 @@ Conclusion
 This project demonstrates an end-to-end machine learning workflow, including data preprocessing, classification, hyperparameter tuning, cross-validation, model comparison and threshold optimisation.
 
 It highlights the importance of evaluating machine learning models against practical business objectives rather than relying exclusively on overall accuracy.
+
+## Saving and Using the Tuned Model
+
+The fitted pipeline and its 0.35 bad-credit decision threshold are stored together
+in `artifacts/credit_risk_model.joblib`. The notebook itself remains unchanged.
+
+To recreate the artifact, run `python save_model.py`. This one-time export script
+fetches the same UCI data and repeats the notebook's deterministic train/test
+split and Logistic Regression grid search. It verifies the selected `C=0.1`
+model and checks predictions before and after saving. It does not update the
+notebook or its saved outputs.
+
+For later predictions, load the saved artifact without training:
+
+```python
+import pandas as pd
+
+from credit_risk_model import load_model, predict_applicants
+
+model_bundle = load_model()
+new_applicants = pd.DataFrame([...])  # Same feature columns as the training data
+predictions = predict_applicants(new_applicants, model_bundle)
+```
+
+The returned labels are `1` for good credit and `2` for bad credit, with the
+saved threshold applied to the bad-credit probability. Run the persistence test
+with `python -m unittest discover -s tests`.
+
+Only load joblib artifacts you trust. The artifact should be loaded with a
+compatible Python and scikit-learn environment.
